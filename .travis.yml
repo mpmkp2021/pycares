@@ -41,8 +41,23 @@ jobs:
       python: 3.7
     - name: "CPython 3.8"
       python: 3.8
+    - name: "CPython 3.9"
+      python: 3.9
     - name: "PyPy 3"
       python: pypy3
+    - name: "CPython 3.6 (+ IDNA)"
+      python: 3.6
+      arch: arm64
+      env: TEST_IDNA=true
+    - name: "CPython 3.7"
+      python: 3.7
+      arch: arm64
+    - name: "CPython 3.8"
+      python: 3.8
+      arch: arm64
+    - name: "CPython 3.9"
+      python: 3.9
+      arch: arm64
     # Deploy source distribution
     - stage: deploy
       name: Deploy source distribution
@@ -51,9 +66,17 @@ jobs:
       after_success: python -m twine upload --skip-existing dist/*.tar.gz
     # Deploy on linux
     - stage: deploy
+      name: Build and deploy Linux aarch64 wheels 
+      arch: arm64
+      services: docker
+      install: python -m pip install twine cibuildwheel~=1.8.0
+      script: python -m cibuildwheel --output-dir wheelhouse
+      after_success: python -m twine upload --skip-existing wheelhouse/*.whl
+    # Deploy on linux
+    - stage: deploy
       name: Build and deploy Linux wheels
       services: docker
-      install: python -m pip install twine cibuildwheel==1.1.0
+      install: python -m pip install twine cibuildwheel~=1.8.0
       script: python -m cibuildwheel --output-dir wheelhouse
       after_success: python -m twine upload --skip-existing wheelhouse/*.whl
     # Deploy on mac
