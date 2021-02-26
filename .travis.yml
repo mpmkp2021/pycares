@@ -53,9 +53,13 @@ jobs:
     - stage: deploy
       name: Build and deploy Linux wheels
       services: docker
-      install: python -m pip install twine cibuildwheel==1.1.0
+      install: python -m pip install twine cibuildwheel~=1.8.0
       script: python -m cibuildwheel --output-dir wheelhouse
       after_success: python -m twine upload --skip-existing wheelhouse/*.whl
+      env:
+        - CIBW_SKIP: cp27-*
+        - CIBW_ARCHS_LINUX: x86_64 aarch64
+        - TWINE_USERNAME: saghul
     # Deploy on mac
     - stage: deploy
       name: Build and deploy macOS wheels
